@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "540493281191",
+    "project_id": "loginhuertocasa",
+    "storage_bucket": "loginhuertocasa.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:540493281191:android:77670462870a4e87476882",
+        "android_client_info": {
+          "package_name": "com.example.apphuertoencasa"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCub8SgnBqvI3kaYrZiG3tJELOOrhLmdY8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
