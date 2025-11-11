@@ -1,4 +1,4 @@
-package com.example.apphuertoencasa.ui.theme.uiHuerto
+package com.example.apphuertoencasa.ui.theme.uiHuerto.Login
 
 import android.app.Activity
 import androidx.compose.foundation.Image
@@ -15,13 +15,16 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -29,21 +32,32 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.apphuertoencasa.R
-import com.google.firebase.Firebase
-import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
-import com.google.firebase.auth.FirebaseAuthInvalidUserException
-import com.google.firebase.auth.auth
+import com.example.apphuertoencasa.ui.theme.data.MyPrefs
+import com.example.apphuertoencasa.ui.theme.uiHuerto.AppButton
+import com.example.apphuertoencasa.ui.theme.uiHuerto.AppSocialMediaButton
+import com.example.apphuertoencasa.ui.theme.uiHuerto.HuertoTextField
+
 
 @Composable
-fun Login( navCtrl: NavHostController, modifier: Modifier, /*onSuccessfullLong:()-> Unit ={}*/) {
+fun Login(navCtrl: NavHostController, modifier: Modifier, onSuccessfullRegister: () -> Unit = {}) {
     var inputEmail by rememberSaveable { mutableStateOf("") }
     var inputPassword by rememberSaveable { mutableStateOf("") }
     val activity = LocalView.current.context as Activity
-    var loginError by rememberSaveable { mutableStateOf("") }
     var emailError by rememberSaveable { mutableStateOf("") }
     var passwordError by rememberSaveable { mutableStateOf("") }
+    var formError by rememberSaveable { mutableStateOf("") }
 
-    val auth = Firebase.auth
+    val context = LocalContext.current
+    val prefs = remember { MyPrefs(context) }
+
+    LaunchedEffect(Unit) {
+        if (prefs.isRegistered()) {
+            navCtrl.navigate("Categoria") {
+                popUpTo("Login") { inclusive = true }
+            }
+        }
+    }
+
     Scaffold(
         modifier = Modifier
             .fillMaxSize()
@@ -56,111 +70,104 @@ fun Login( navCtrl: NavHostController, modifier: Modifier, /*onSuccessfullLong:(
             modifier = Modifier
                 .padding(horizontal = 30.dp, vertical = 30.dp)
                 .padding(innerPadding),
-            horizontalAlignment = Alignment.CenterHorizontally,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Image(
-                painter = painterResource(
-                    R.drawable.huerto,
-                ),
-                contentDescription = "Content description for visually impaired",
+                painter = painterResource(R.drawable.huerto),
+                contentDescription = null,
                 modifier = Modifier.size(150.dp)
             )
-            Row (modifier = Modifier.fillMaxWidth()) {
+            Row(Modifier.fillMaxWidth()) {
                 Text("Iniciar sesión", fontSize = 30.sp, fontWeight = FontWeight.Bold)
             }
-
-            Row (modifier = Modifier.fillMaxWidth()) {
-                Text("Hi there! Nice to see you again", fontSize = 15.sp, fontWeight = FontWeight.Bold, color = Color.LightGray)
+            Row(Modifier.fillMaxWidth()) {
+                Text(
+                    "Hi there! Nice to see you again",
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.LightGray
+                )
             }
 
-            Row (modifier = Modifier.padding(top = 30.dp)) {
+            Row(Modifier.padding(top = 30.dp)) {
                 Column {
-                    Text(
-                        "Email", color = Color(0xFFF85F6A),
-                        fontSize = 15.sp, fontWeight = FontWeight.Bold,
-                    )
+                    Text("Email", color = Color(0xFFF85F6A), fontSize = 15.sp, fontWeight = FontWeight.Bold)
+
                     HuertoTextField(
                         value = inputEmail,
-                        onValueChange = { inputEmail = it },
+                        onValueChange = {
+                            inputEmail = it
+                            val (ok, msg) = validationEmail(inputEmail)
+                            emailError = if (ok || inputEmail.isEmpty()) "" else msg
+                        },
                         label = { Text("Escribe tu email") },
-                        placeholder = {  },
+                        placeholder = { },
                         supportingText = {
-                            if(emailError.isNotEmpty()){
-                                Text(
-                                    text = emailError,
-                                    color = Color.Red
-                                )
+                            if (emailError.isNotEmpty()) {
+                                Text(text = emailError, color = Color.Red)
                             }
                         }
                     )
+
                     Spacer(modifier = Modifier.padding(top = 10.dp))
-                    Text(
-                        "Password", color = Color(0xFFF85F6A),
-                        fontSize = 15.sp, fontWeight = FontWeight.Bold
-                    )
+                    Text("Password", color = Color(0xFFF85F6A), fontSize = 15.sp, fontWeight = FontWeight.Bold)
+
                     HuertoTextField(
                         value = inputPassword,
-                        onValueChange = { inputPassword = it },
+                        onValueChange = {
+                            inputPassword = it
+                            val (ok, msg) = validatePassword(inputPassword)
+                            passwordError = if (ok || inputPassword.isEmpty()) "" else msg
+                        },
                         label = { Text("Escribe tu contraseña") },
-                        placeholder = {  },
+                        placeholder = { },
                         supportingText = {
-                            if(passwordError.isNotEmpty()){
-                                Text(
-                                    text = passwordError,
-                                    color = Color.Red
-                                )
+                            if (passwordError.isNotEmpty()) {
+                                Text(text = passwordError, color = Color.Red)
                             }
                         }
                     )
                 }
-
             }
 
             Spacer(modifier = Modifier.padding(top = 50.dp))
-            if(loginError.isNotEmpty()){
+
+            if (formError.isNotEmpty()) {
                 Text(
-                    text = loginError,
+                    text = formError,
                     color = Color.Red,
-                    modifier = modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 8.dp)
+                    modifier = modifier.fillMaxWidth().padding(bottom = 8.dp)
                 )
             }
-            AppButton(
 
+            AppButton(
                 text = "Inicio de sesión",
                 onClick = {
-                    navCtrl.navigate(route = "Categoria")
-              /*val isValidEmail: Boolean = validationEmail(inputEmail).first
-                    val isValidPassword: Boolean = validatePassword(inputPassword).first
+                    val (isValidEmail, emailMsg) = validationEmail(inputEmail)
+                    val (isValidPassword, passMsg) = validatePassword(inputPassword)
 
-                    emailError = validationEmail(inputEmail).second
-                    passwordError =validatePassword(inputPassword).second
+                    emailError = if (!isValidEmail) emailMsg else ""
+                    passwordError = if (!isValidPassword) passMsg else ""
+                    formError = ""
 
-                    if(isValidEmail && isValidPassword){
-                        auth.signInWithEmailAndPassword(inputEmail, inputPassword
-                        ).addOnCompleteListener(activity){ task ->
-                            if(task.isSuccessful){
-                                onSuccessfullLong()
-                            }else{
-                                loginError = when(task.exception){
-                                    is FirebaseAuthInvalidCredentialsException -> "Correo contraseña incorrecta"
-                                    is FirebaseAuthInvalidUserException -> "No existe una cuenta con este correo"
-                                    else -> "Error al iniciar sesión. Intente de nuevo"
-                                }
-                            }
-                        }
-                    }else{
-                    }*/
+                    if (isValidEmail && isValidPassword) {
+                        prefs.saveEmail(inputEmail)
+                        prefs.savePassword(inputPassword)
+                        prefs.setRegistered(true)
+                        onSuccessfullRegister()
+                        navCtrl.navigate("Categoria")
+                    } else {
+                        formError = "Revisa los campos marcados en rojo."
+                    }
                 },
                 height = 80.dp,
                 containerColor = Color(0xFF629C44),
                 contentColor = Color.White
             )
+
             Spacer(modifier = Modifier.padding(top = 30.dp))
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
+
+            Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
                 AppSocialMediaButton(
                     text = "Twitter",
                     onClick = { /* ... */ },
@@ -176,16 +183,19 @@ fun Login( navCtrl: NavHostController, modifier: Modifier, /*onSuccessfullLong:(
                     contentColor = Color.White
                 )
             }
-            Row (modifier = Modifier.padding(top = 60.dp).fillMaxWidth(),
-                 horizontalArrangement = Arrangement.Absolute.SpaceBetween) {
-                Text("No tienes una cuenta?",
-                color = Color(0xFF989EB1))
+            Row(
+                modifier = Modifier
+                    .padding(top = 60.dp)
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text("No tienes una cuenta?", color = Color(0xFF989EB1))
                 Text(
                     text = "Regístrate",
                     color = Color(0xFF629C44),
                     fontWeight = FontWeight.Bold,
-                    modifier = Modifier.clickable{
-                        navCtrl.navigate(route = "Sign In")
+                    modifier = Modifier.clickable {
+                        navCtrl.navigate("Sign In")
                     }
                 )
             }

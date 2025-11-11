@@ -16,10 +16,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AddCard
 import androidx.compose.material.icons.filled.CardTravel
 import androidx.compose.material.icons.filled.MonetizationOn
-import androidx.compose.material.icons.filled.RemoveCircleOutline
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -30,8 +28,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
-import com.google.firebase.auth.FirebaseAuthInvalidUserException
 
 @Composable
 fun ConfirmarPedido(){
@@ -40,9 +36,7 @@ fun ConfirmarPedido(){
         modifier = Modifier
             .fillMaxSize()
     ) {
-
         val scrollState = rememberScrollState()
-
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -102,14 +96,10 @@ fun ConfirmarPedido(){
                 )
 
                 Spacer(modifier = Modifier.width(8.dp))
-
                 Text("Precio envío")
-
                 Spacer(modifier = Modifier.weight(1f))
-
                 Text("$2000")
             }
-
             HorizontalDivider(
                 modifier = Modifier.fillMaxWidth(),
                 thickness = 1.dp,
@@ -128,14 +118,10 @@ fun ConfirmarPedido(){
                 )
 
                 Spacer(modifier = Modifier.width(8.dp))
-
                 Text("Total de pedido")
-
                 Spacer(modifier = Modifier.weight(1f))
-
                 Text("$32.000")
             }
-
             Spacer(modifier = Modifier.height(60.dp))
         }
         AppRealizarPedido(
@@ -146,7 +132,7 @@ fun ConfirmarPedido(){
                 contentColor = Color.White,
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
-                    .offset(y = (-180).dp)   // <- súbelo 24dp (ajusta a tu gusto)
+                    .offset(y = (-180).dp)
             )
     }
 }

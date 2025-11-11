@@ -50,7 +50,7 @@ fun Categoria(navCtrl: NavHostController){
         Row(
             modifier = Modifier.fillMaxWidth()
                 .padding(top = 30.dp, start = 30.dp, end = 30.dp).background(
-                    color = Color(0xFFCFCFCF),
+                    color = Color(0xFFF19737),
                     shape = RoundedCornerShape(6.dp)
                 ),
             horizontalArrangement = Arrangement.SpaceEvenly
@@ -59,6 +59,7 @@ fun Categoria(navCtrl: NavHostController){
             Text("CATEGORÍAS")
             Text("BLOG")
         }
+        Spacer(modifier = Modifier.height(50.dp))
         InfoRowCategoria(
             "Frutas frescas",
             imageRes = R.drawable.frutasfrescas,
@@ -72,20 +73,13 @@ fun Categoria(navCtrl: NavHostController){
             imageRes = R.drawable.vedurasorganicas,
             iconRes = R.drawable.flechaderecha,
             description = "Descubre nuestra gama de verduras orgánicas, cultivadas sin el uso de pesticidas ni químicos.",
-            onIconClick = {navCtrl.navigate(route = "Verduras organicas")}
+            onIconClick = {navCtrl.navigate(route = "Verduras orgánicas")}
         )
         InfoRowCategoria(
             "Productos orgánicos",
             imageRes = R.drawable.productoorganico,
             iconRes = R.drawable.flechaderecha,
             description = " Nuestros productos orgánicos están elaborados con ingredientes naturales y procesados de manera responsable.",
-            onIconClick = {}
-        )
-        InfoRowCategoria(
-            "Productos Lácteos",
-            imageRes = R.drawable.productoslacteos,
-            iconRes = R.drawable.flechaderecha,
-            description = "Los productos lácteos de HuertoHogar provienen de granjas locales que se dedican a la producción responsable y de calidad.",
             onIconClick = {}
         )
     }
