@@ -38,8 +38,6 @@ import com.example.apphuertoencasa.R
 
 @Composable
 fun FinalizarCompra() {
-
-    // animación (escala)
     val scale by rememberInfiniteTransition().animateFloat(
         initialValue = 1f,
         targetValue = 1.2f,
@@ -92,8 +90,6 @@ fun FinalizarCompra() {
                 )
 
                 Spacer(Modifier.height(8.dp))
-
-                // texto con animación
                 Text(
                     "Gracias por preferirnos ♥",
                     fontSize = 18.sp,

@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircleOutline
 import androidx.compose.material.icons.filled.RemoveCircleOutline
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -18,7 +17,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun ProductRowContador(disminuir : () -> Unit, aumentar: () -> Unit, contador: Int) {
+fun ProductRowContador(disminuir : () -> Unit, aumentar: () -> Unit, stock: Int) {
     Column(Modifier.fillMaxWidth()) {
         Row(
             modifier = Modifier
@@ -36,7 +35,7 @@ fun ProductRowContador(disminuir : () -> Unit, aumentar: () -> Unit, contador: I
                     },
                 tint = Color(0xFF4CAF50),
             )
-            Text(contador.toString())
+            Text(stock.toString())
             Icon(
                 imageVector = Icons.Filled.AddCircleOutline,
                 contentDescription = "Add",
@@ -46,11 +45,5 @@ fun ProductRowContador(disminuir : () -> Unit, aumentar: () -> Unit, contador: I
                 }
             )
         }
-        HorizontalDivider(
-            modifier = Modifier.fillMaxWidth(),
-            thickness = 1.dp,
-            color = Color(0xFFE0E0E0)
-        )
-
     }
 }

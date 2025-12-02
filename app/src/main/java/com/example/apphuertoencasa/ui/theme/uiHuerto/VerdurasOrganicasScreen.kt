@@ -26,10 +26,18 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -42,18 +50,26 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import com.example.apphuertoencasa.ui.theme.LazyVerticalGridVerduras
 import com.example.apphuertoencasa.ui.theme.viewModel.ContadorViewModel
+import com.example.apphuertoencasa.ui.theme.viewModel.VerdurasUiState
+import com.example.apphuertoencasa.ui.theme.viewModel.VerdurasViewModel
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun VerdurasOrganicasScreen(
     viewModel: ContadorViewModel,
-    onClick: (() -> Unit)
+    onClick: (() -> Unit),
+    viewModelVerdura: VerdurasViewModel,
+    navController: NavHostController
 ) {
     var started by remember { mutableStateOf(false) }
     LaunchedEffect(Unit) { started = true }
 
-    // Pulso infinito (breathing)
+    val uiState by viewModelVerdura.uiState.collectAsState()
+
+
     val infinite = rememberInfiniteTransition(label = "breathing")
     val pulse by infinite.animateFloat(
         initialValue = 1f,
@@ -77,7 +93,6 @@ fun VerdurasOrganicasScreen(
     )
 
     Box(modifier = Modifier.fillMaxSize()) {
-
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -85,7 +100,17 @@ fun VerdurasOrganicasScreen(
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Spacer(modifier = Modifier.height(50.dp))
+            TopAppBar(
+                title = {},
+                navigationIcon = {
+                    IconButton(onClick = { navController.popBackStack() }) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Volver"
+                        )
+                    }
+                }
+            )
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -108,8 +133,23 @@ fun VerdurasOrganicasScreen(
                     fontWeight = FontWeight.Bold
                 )
             }
+            Spacer(modifier = Modifier.height(16.dp))
+            when (val state = uiState) {
+                is VerdurasUiState.Loading -> {
+                    CircularProgressIndicator()
+                }
 
-            LazyVerticalGridVerduras(viewModel)
+                is VerdurasUiState.Error -> {
+                    Text(text = state.message, color = Color.Red)
+                }
+
+                is VerdurasUiState.Success -> {
+                    viewModel.setVerdurasList(state.response.verduras)
+                    LazyVerticalGridVerduras(
+                        viewModel = viewModel,
+                    )
+                }
+            }
         }
         AnimatedVisibility(
             visible = started,

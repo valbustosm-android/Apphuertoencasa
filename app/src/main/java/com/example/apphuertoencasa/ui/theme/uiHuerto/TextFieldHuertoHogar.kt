@@ -11,6 +11,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.input.VisualTransformation
 
 @Composable
 fun HuertoTextField(
@@ -24,8 +25,10 @@ fun HuertoTextField(
     isError: Boolean = false,
     leadingIcon: (@Composable (() -> Unit))? = null,
     trailingIcon: (@Composable (() -> Unit))? = null,
-    supportingText: (@Composable (() -> Unit))? = null
-) {
+    supportingText: (@Composable (() -> Unit))? = null,
+    visualTransformation: VisualTransformation = VisualTransformation.None,
+
+    ) {
     TextField(
         value = value,
         onValueChange = onValueChange,
@@ -48,5 +51,6 @@ fun HuertoTextField(
             unfocusedIndicatorColor = Color.LightGray,
             errorIndicatorColor = Color(0xFFB00020)
         ),
+        visualTransformation = visualTransformation
     )
 }

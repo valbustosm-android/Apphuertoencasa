@@ -5,17 +5,13 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.MonetizationOn
-import androidx.compose.material3.Button
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -26,12 +22,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.apphuertoencasa.ui.theme.uiHuerto.ButtonPagar
 import com.example.apphuertoencasa.ui.theme.uiHuerto.LazyVerticalGridFruta
 import com.example.apphuertoencasa.ui.theme.viewModel.ContadorViewModel
-import androidx.compose.animation.*
-import androidx.compose.animation.core.*
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.draw.alpha
@@ -48,14 +40,27 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
+import androidx.compose.material3.TopAppBar
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.*
+import androidx.navigation.NavHostController
+import com.example.apphuertoencasa.ui.theme.viewModel.FrutasUiState
+import com.example.apphuertoencasa.ui.theme.viewModel.FrutasViewModel
 
+
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FrutasFrescasScreen(
+    navController: NavHostController,
     viewModel: ContadorViewModel,
+    viewModelFrutas: FrutasViewModel,
     onClick: (() -> Unit)
 ) {
     var started by remember { mutableStateOf(false) }
     LaunchedEffect(Unit) { started = true }
+
+    val uiState by viewModelFrutas.uiState.collectAsState()
 
     val infinite = rememberInfiniteTransition(label = "breathing")
     val pulse by infinite.animateFloat(
@@ -88,7 +93,18 @@ fun FrutasFrescasScreen(
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Spacer(modifier = Modifier.height(50.dp))
+            TopAppBar(
+                title = {},
+                navigationIcon = {
+                    IconButton(onClick = { navController.popBackStack() }) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Volver"
+                        )
+                    }
+                }
+            )
+
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -112,8 +128,24 @@ fun FrutasFrescasScreen(
                 )
             }
 
+            Spacer(modifier = Modifier.height(16.dp))
 
-            LazyVerticalGridFruta(viewModel)
+            when (val state = uiState) {
+                is FrutasUiState.Loading -> {
+                    CircularProgressIndicator()
+                }
+
+                is FrutasUiState.Error -> {
+                    Text(text = state.message, color = Color.Red)
+                }
+
+                is FrutasUiState.Success -> {
+                    viewModel.setFrutasList(state.response.frutas)
+                    LazyVerticalGridFruta(
+                        viewModel = viewModel,
+                    )
+                }
+            }
         }
 
         AnimatedVisibility(
@@ -141,5 +173,3 @@ fun FrutasFrescasScreen(
         }
     }
 }
-
-
