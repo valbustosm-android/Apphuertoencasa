@@ -5,7 +5,6 @@ import androidx.core.content.edit
 import com.example.apphuertoencasa.ui.theme.model.Purchase
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.decodeFromString
 
 class MyPrefs(context: Context) {
     private val prefs = context.getSharedPreferences("MyPreferences", Context.MODE_PRIVATE)

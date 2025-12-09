@@ -18,9 +18,16 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -38,6 +45,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import com.example.apphuertoencasa.R
 import com.example.apphuertoencasa.ui.theme.data.MyPrefs
 import com.example.apphuertoencasa.ui.theme.model.Purchase
@@ -48,8 +56,9 @@ import java.util.Date
 import java.util.Locale
 import java.util.UUID
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FinalizarCompra(viewModel: ContadorViewModel) {
+fun FinalizarCompra(viewModel: ContadorViewModel, navCtrl: NavHostController) {
     val context = LocalContext.current
     val prefs = remember { MyPrefs(context) }
     val frutas = viewModel.frutas.collectAsState().value
@@ -131,6 +140,24 @@ fun FinalizarCompra(viewModel: ContadorViewModel) {
             colors = CardDefaults.cardColors(containerColor = Color.White),
             elevation = CardDefaults.cardElevation(8.dp)
         ) {
+            val bgColor = Color(0xFFFFF6E5)
+            val orange = Color(0xFFF19737)
+            TopAppBar(
+                modifier = Modifier.fillMaxWidth(),
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = bgColor
+                ),
+                title = {},
+                navigationIcon = {
+                    IconButton(onClick = { navCtrl.popBackStack() }) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Volver",
+                            tint = Color.Black
+                        )
+                    }
+                }
+            )
             Column(
                 modifier = Modifier
                     .padding(24.dp)
@@ -138,7 +165,6 @@ fun FinalizarCompra(viewModel: ContadorViewModel) {
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-
                 Image(
                     painter = painterResource(id = R.drawable.compra),
                     contentDescription = "Icono compra finalizada",

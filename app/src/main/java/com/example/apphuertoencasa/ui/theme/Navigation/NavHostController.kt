@@ -63,7 +63,7 @@ fun NavHostController(modifier: Modifier,
         }
         composable  (route = "Carrito") { Carrito(navCtrl, viewModel) }
         composable  (route = "Confirmar pedido") { ConfirmarPedido() }
-        composable  (route = "Finalizar Compra") { FinalizarCompra(viewModel) }
+        composable  (route = "Finalizar Compra") { FinalizarCompra(viewModel, navCtrl) }
         composable  (route = "Consejos saludables") { ConsejosScreen(navCtrl) }
         composable  (route = "Profile") { Profile(navCtrl) }
         composable  (route = "Mis Compras") { MisCompras(navCtrl) }
