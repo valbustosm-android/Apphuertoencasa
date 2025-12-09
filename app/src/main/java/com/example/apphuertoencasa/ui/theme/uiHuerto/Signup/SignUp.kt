@@ -416,8 +416,15 @@ fun SignUp(
                     confirmarPasswordError = if (!isValidConfirm) confirmMsg else ""
 
                     if (isValidName && isValidAddress && isValidEmail && isValidPassword && isValidConfirm) {
+                        // Verificar si el email cambió
+                        val lastEmail = prefs.getLastEmail()
+                        if (lastEmail != null && lastEmail != inputEmail) {
+                            // Si el email es diferente, borrar todas las compras
+                            prefs.clearAllPurchases()
+                        }
                         prefs.saveName(inputName)
                         prefs.saveEmail(inputEmail)
+                        prefs.setLastEmail(inputEmail)
                         prefs.saveAddress(inputAddress)
                         prefs.savePassword(inputPassword)
                         prefs.saveConfirmPassword(inputConfirmarContrasena)

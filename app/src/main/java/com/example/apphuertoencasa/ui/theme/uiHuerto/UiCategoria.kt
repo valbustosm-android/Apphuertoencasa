@@ -15,9 +15,13 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -59,12 +63,29 @@ fun Categoria(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
-        Text(
-            "Productos",
-            modifier = Modifier.padding(start = 10.dp, top = 70.dp),
-            fontSize = 30.sp,
-            fontWeight = FontWeight.Bold
-        )
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 10.dp, top = 70.dp, end = 10.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                "Productos",
+                fontSize = 30.sp,
+                fontWeight = FontWeight.Bold
+            )
+            IconButton(
+                onClick = { navCtrl.navigate("Profile") }
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.Person,
+                    contentDescription = "Perfil de usuario",
+                    modifier = Modifier.size(32.dp),
+                    tint = Color(0xFFF19737)
+                )
+            }
+        }
 
         Spacer(modifier = Modifier.height(20.dp))
         when (val state = uiState) {

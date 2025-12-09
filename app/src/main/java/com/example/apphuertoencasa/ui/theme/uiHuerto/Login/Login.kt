@@ -151,7 +151,14 @@ fun Login(navCtrl: NavHostController, modifier: Modifier, onSuccessfullRegister:
                     formError = ""
 
                     if (isValidEmail && isValidPassword) {
+                        // Verificar si el email cambió
+                        val lastEmail = prefs.getLastEmail()
+                        if (lastEmail != null && lastEmail != inputEmail) {
+                            // Si el email es diferente, borrar todas las compras
+                            prefs.clearAllPurchases()
+                        }
                         prefs.saveEmail(inputEmail)
+                        prefs.setLastEmail(inputEmail)
                         prefs.savePassword(inputPassword)
                         prefs.setRegistered(true)
                         onSuccessfullRegister()

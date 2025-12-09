@@ -22,12 +22,16 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -35,9 +39,69 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.apphuertoencasa.R
+import com.example.apphuertoencasa.ui.theme.data.MyPrefs
+import com.example.apphuertoencasa.ui.theme.model.Purchase
+import com.example.apphuertoencasa.ui.theme.model.PurchaseItem
+import com.example.apphuertoencasa.ui.theme.viewModel.ContadorViewModel
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
+import java.util.UUID
 
 @Composable
-fun FinalizarCompra() {
+fun FinalizarCompra(viewModel: ContadorViewModel) {
+    val context = LocalContext.current
+    val prefs = remember { MyPrefs(context) }
+    val frutas = viewModel.frutas.collectAsState().value
+    val verduras = viewModel.verduras.collectAsState().value
+    
+    LaunchedEffect(Unit) {
+        // Obtener productos con contador > 0
+        val purchaseItems = mutableListOf<PurchaseItem>()
+        var totalPrice = 0
+        
+        frutas.forEach { fruta ->
+            if (fruta.contador > 0) {
+                val itemTotal = fruta.contador * fruta.precio
+                purchaseItems.add(
+                    PurchaseItem(
+                        name = fruta.name ?: "Producto sin nombre",
+                        quantity = fruta.contador,
+                        pricePerUnit = fruta.precio,
+                        total = itemTotal
+                    )
+                )
+                totalPrice += itemTotal
+            }
+        }
+        
+        verduras.forEach { verdura ->
+            if (verdura.contador > 0) {
+                val itemTotal = verdura.contador * verdura.precio
+                purchaseItems.add(
+                    PurchaseItem(
+                        name = verdura.name ?: "Producto sin nombre",
+                        quantity = verdura.contador,
+                        pricePerUnit = verdura.precio,
+                        total = itemTotal
+                    )
+                )
+                totalPrice += itemTotal
+            }
+        }
+        
+        // Guardar la compra solo si hay productos
+        if (purchaseItems.isNotEmpty()) {
+            val dateFormat = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
+            val purchase = Purchase(
+                id = UUID.randomUUID().toString(),
+                date = dateFormat.format(Date()),
+                items = purchaseItems,
+                totalPrice = totalPrice
+            )
+            prefs.savePurchase(purchase)
+        }
+    }
     val scale by rememberInfiniteTransition().animateFloat(
         initialValue = 1f,
         targetValue = 1.2f,
@@ -106,7 +170,7 @@ fun FinalizarCompra() {
 @Preview(showBackground = true)
 @Composable
 fun PreviewFinalizarCompra() {
-    FinalizarCompra()
+    // Preview sin ViewModel
 }
 
 

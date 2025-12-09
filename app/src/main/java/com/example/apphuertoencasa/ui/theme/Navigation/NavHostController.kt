@@ -12,6 +12,8 @@ import com.example.apphuertoencasa.ui.theme.uiHuerto.ConfirmarPedido
 import com.example.apphuertoencasa.ui.theme.uiHuerto.ConsejosScreen
 import com.example.apphuertoencasa.ui.theme.uiHuerto.FinalizarCompra
 import com.example.apphuertoencasa.ui.theme.uiHuerto.Login.Login
+import com.example.apphuertoencasa.ui.theme.uiHuerto.MisCompras
+import com.example.apphuertoencasa.ui.theme.uiHuerto.Profile
 import com.example.apphuertoencasa.ui.theme.uiHuerto.Signup.SignUp
 import com.example.apphuertoencasa.ui.theme.uiHuerto.VerdurasOrganicasScreen
 import com.example.apphuertoencasa.ui.theme.viewModel.CategoryViewModel
@@ -61,7 +63,9 @@ fun NavHostController(modifier: Modifier,
         }
         composable  (route = "Carrito") { Carrito(navCtrl, viewModel) }
         composable  (route = "Confirmar pedido") { ConfirmarPedido() }
-        composable  (route = "Finalizar Compra") { FinalizarCompra() }
+        composable  (route = "Finalizar Compra") { FinalizarCompra(viewModel) }
         composable  (route = "Consejos saludables") { ConsejosScreen(navCtrl) }
+        composable  (route = "Profile") { Profile(navCtrl) }
+        composable  (route = "Mis Compras") { MisCompras(navCtrl) }
     }
 }
